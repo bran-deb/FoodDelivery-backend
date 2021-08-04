@@ -5,6 +5,7 @@ const Users = mongoose.model('User', new Schema({//crear modelo (nombre,define S
     email: String,
     password: String,
     salt: String,
+    role: { type: String, default: 'user' } //admin
 }))
 
 module.exports = Users

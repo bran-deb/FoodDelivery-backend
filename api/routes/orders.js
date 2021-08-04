@@ -1,6 +1,6 @@
 const express = require('express')
 const Orders = require('../models/Orders')
-const isAuthenticated = require('../auth')
+const { isAuthenticated, hasRoles } = require('../auth')
 
 const router = express.Router()
 
@@ -17,10 +17,11 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/', isAuthenticated, (req, res) => {
-    Orders.create(req.body).then(x => res.status(201).send(x))
+    const { _id } = req.user
+    Orders.create(...req.body, user_id: _id).then(x => res.status(201).send(x))
 })
 
-router.put('/:id', isAuthenticated, (req, res) => {
+router.put('/:id', isAuthenticated, hasRoles(['admin', 'user'])(req, res) => {
     Orders.findOneAndUpdate(req.params.id, req.body)
         .then(() => res.sendStatus(204))
 })
